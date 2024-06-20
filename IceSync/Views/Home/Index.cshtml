@@ -1,0 +1,45 @@
+﻿@model IEnumerable<WorkflowModel>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Workflow Id</th>
+            <th>Workflow Name</th>
+            <th>Is Active</th>
+            <th>Multi Exec Behavior</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var workflow in Model)
+        {
+            <tr>
+                <td>@workflow.Id</td>
+                <td>@workflow.Name</td>
+                <td>@workflow.IsActive</td>
+                <td>@workflow.MultiExecBehavior</td>
+                <td>
+                    <button class="btn btn-primary" onclick="runWorkflow(@workflow.Id)">Run</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        function runWorkflow(workflowId) {
+            fetch(`/Home/RunWorkflow/${workflowId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.success ? "Workflow ran successfully!" : "Failed to run workflow.");
+            });
+        }
+    </script>
+}
